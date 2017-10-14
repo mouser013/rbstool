@@ -1,0 +1,11 @@
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\bin\Debug\redditBatchSubmitTool.exe.config
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\bin\Debug\redditBatchSubmitTool.exe
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\bin\Debug\redditBatchSubmitTool.pdb
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\bin\Debug\Newtonsoft.Json.dll
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\bin\Debug\Newtonsoft.Json.xml
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.csprojResolveAssemblyReference.cache
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.Form1.resources
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.Properties.Resources.resources
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.csproj.GenerateResource.Cache
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.exe
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.pdb
