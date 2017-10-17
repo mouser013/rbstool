@@ -3,22 +3,79 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-//using RedditSharp;
 using System.Net.Http;
-//using CefSharp.WinForms;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace redditBatchSubmitTool
 {
     public partial class Form1 : Form
     {
 
-        String token, subreddit;
-        //Reddit reddit;
-        //RedditSharp.Things.AuthenticatedUser user;
+        String code, token, subreddit, user, pass;
+
+        private void retrieveToken()
+        {
+            if (code == null)
+                return;
+            
+            
+            var values = new Dictionary<string, string>{
+                {"grant_type","authorization_code"},
+                {"code",code},
+                {"redirect_uri","https://mouser013.github.io"},
+            };
+            IEnumerable<String> val;
+            string svcCredentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes("8DzA0_bx9X8hCA:"));
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + svcCredentials);
+
+            var content = new FormUrlEncodedContent(values);
+            var response = client.PostAsync("https://www.reddit.com/api/v1/access_token", content).Result;
+            var responseStr = response.Content.ReadAsStringAsync().Result;
+            tokenresponse resp = JsonConvert.DeserializeObject<tokenresponse>(responseStr);
+            Properties.Settings.Default.accessToken = resp.access_token;
+            Properties.Settings.Default.refreshToken = resp.refresh_token;
+            Properties.Settings.Default.tokenIssueTime = DateTime.Now;
+            Properties.Settings.Default.Save();
+        }
+
+        private void refreshToken()
+        {
+            var values = new Dictionary<string, string>{
+                {"grant_type","refresh_token"},
+                {"refresh_token",Properties.Settings.Default.refreshToken},
+            };
+            string svcCredentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes("8DzA0_bx9X8hCA:"));
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + svcCredentials);
+
+            var content = new FormUrlEncodedContent(values);
+            var response = client.PostAsync("https://www.reddit.com/api/v1/access_token", content).Result;
+            var responseStr = response.Content.ReadAsStringAsync().Result;
+
+            tokenresponse resp = JsonConvert.DeserializeObject<tokenresponse>(responseStr);
+            Properties.Settings.Default.accessToken = resp.access_token;
+            Properties.Settings.Default.tokenIssueTime = DateTime.Now;
+            Properties.Settings.Default.Save();
+        }
+
+        private bool checkAndRefreshToken()
+        {
+            if (Properties.Settings.Default.accessToken == "")
+                return false;
+            else
+            {
+                DateTime issue = Properties.Settings.Default.tokenIssueTime;
+                issue.AddHours(1);
+                if (DateTime.Now > issue)
+                    refreshToken();
+                return true;
+            }
+        }
 
         private async void submitUrl(String url, String title)
         {
@@ -43,10 +100,11 @@ namespace redditBatchSubmitTool
             textOut.AppendText(responseStr + '\n');
         }
 
-        private void parseResponse(String resUrl)
+        private void parseCode(String resUrl)
         {
-            int start = resUrl.IndexOf('=') + 1, end = resUrl.IndexOf("&");
-            token = resUrl.Substring(start, end - start);
+            int start = resUrl.LastIndexOf('=') + 1, end = resUrl.Length;
+            code = resUrl.Substring(start, end - start);
+            Properties.Settings.Default.authCode = code;
         }
 
         private static readonly HttpClient client = new HttpClient();
@@ -59,9 +117,18 @@ namespace redditBatchSubmitTool
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            panelMain.Hide();
-            panelAuth.Hide();
-            panelAcc.Show();
+            if(checkAndRefreshToken())
+            {
+                panelMain.Show();
+                panelAuth.Hide();
+                panelAcc.Hide();
+            }
+            else
+            {
+                panelMain.Hide();
+                panelAuth.Hide();
+                panelAcc.Show();
+            }
         }
 
         private void buttonSubmit_Click(object sender, EventArgs e)
@@ -88,41 +155,44 @@ namespace redditBatchSubmitTool
             //auth code
             //if(auth)
             {
-                //user = reddit.LogIn(textUser.Text, textPass.Text);
+                user = textUser.Text;
+                pass = textPass.Text;
                 //panelMain.Show();
                 panelAuth.Show();
                 panelAcc.Hide();
             }
-            browserAuth.Navigate("https://www.reddit.com/api/v1/authorize?client_id=8DzA0_bx9X8hCA&response_type=token&state=akrnarvhburvbuyrirvb&redirect_uri=https://mouser013.github.io&scope=identity submit");
+            browserAuth.Navigate("https://www.reddit.com/api/v1/authorize?client_id=8DzA0_bx9X8hCA&response_type=code&state=akrnarvhburvbuyrirvb&redirect_uri=https://mouser013.github.io&duration=permanent&scope=identity submit");
         }
 
         private void browserAuth_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            //HtmlDocument doc = browserAuth.Document;
-            //String res = e.Url.Fragment;
-            //if(e.Url.Host == "127.0.0.1")
-            {
-                //panelAuth.Hide();
-                //panelMain.Show();
-                //textBrowser.AppendText(res+"\n");
-                //textOut.AppendText(res);
-            }
+
         }
 
         private void browserAuth_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             HtmlDocument doc = browserAuth.Document;
-            //String res = doc.Url.AbsoluteUri;
-            String res = doc.Url.Fragment;
+
             if(e.Url.Host == "mouser013.github.io")
             {
-                parseResponse(res);
+                String res = doc.Url.Query;
+                parseCode(res);
+                retrieveToken();
                 panelAuth.Hide();
                 panelMain.Show();
                 //textBrowser.AppendText(res + "\n");
-                //textOut.AppendText(res);
-                //textOut.AppendText(token);
+                textOut.AppendText(res);
+                textOut.AppendText(code);
             }
         }
     }
+
+    public class tokenresponse
+    {
+        public String access_token;
+        public String token_type;
+        public String expires_in;
+        public String scope;
+        public String refresh_token;
+    };
 }
