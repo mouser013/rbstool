@@ -8,4 +8,4 @@ D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatc
 D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.csproj.GenerateResource.Cache
 D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.exe
 D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.pdb
-D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.Form1.resources
+D:\Local Disk E\Software\Visual Studio Projects\redditBatchSubmitTool\redditBatchSubmitTool\obj\Debug\redditBatchSubmitTool.formBST.resources

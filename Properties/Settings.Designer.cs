@@ -69,5 +69,17 @@ namespace redditBatchSubmitTool.Properties {
                 this["tokenIssueTime"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("---")]
+        public string user {
+            get {
+                return ((string)(this["user"]));
+            }
+            set {
+                this["user"] = value;
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace redditBatchSubmitTool
 {
-    partial class Form1
+    partial class formBST
     {
         /// <summary>
         /// Required designer variable.
@@ -32,12 +32,17 @@
             this.buttonSubmit = new System.Windows.Forms.Button();
             this.textOut = new System.Windows.Forms.TextBox();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.labelName = new System.Windows.Forms.Label();
+            this.labelNameFla = new System.Windows.Forms.Label();
+            this.buttonLogout = new System.Windows.Forms.Button();
             this.textSubreddit = new System.Windows.Forms.TextBox();
             this.panelAcc = new System.Windows.Forms.Panel();
             this.buttonLogin = new System.Windows.Forms.Button();
             this.panelAuth = new System.Windows.Forms.Panel();
             this.textBrowser = new System.Windows.Forms.TextBox();
             this.browserAuth = new System.Windows.Forms.WebBrowser();
+            this.labelSubreddit = new System.Windows.Forms.Label();
+            this.labelLinkbox = new System.Windows.Forms.Label();
             this.panelMain.SuspendLayout();
             this.panelAcc.SuspendLayout();
             this.panelAuth.SuspendLayout();
@@ -45,7 +50,7 @@
             // 
             // textIn
             // 
-            this.textIn.Location = new System.Drawing.Point(258, 12);
+            this.textIn.Location = new System.Drawing.Point(258, 68);
             this.textIn.Multiline = true;
             this.textIn.Name = "textIn";
             this.textIn.Size = new System.Drawing.Size(523, 303);
@@ -53,7 +58,7 @@
             // 
             // buttonSubmit
             // 
-            this.buttonSubmit.Location = new System.Drawing.Point(409, 340);
+            this.buttonSubmit.Location = new System.Drawing.Point(402, 386);
             this.buttonSubmit.Name = "buttonSubmit";
             this.buttonSubmit.Size = new System.Drawing.Size(271, 62);
             this.buttonSubmit.TabIndex = 2;
@@ -72,6 +77,11 @@
             // 
             // panelMain
             // 
+            this.panelMain.Controls.Add(this.labelLinkbox);
+            this.panelMain.Controls.Add(this.labelSubreddit);
+            this.panelMain.Controls.Add(this.labelName);
+            this.panelMain.Controls.Add(this.labelNameFla);
+            this.panelMain.Controls.Add(this.buttonLogout);
             this.panelMain.Controls.Add(this.textSubreddit);
             this.panelMain.Controls.Add(this.textOut);
             this.panelMain.Controls.Add(this.buttonSubmit);
@@ -82,9 +92,37 @@
             this.panelMain.Size = new System.Drawing.Size(793, 530);
             this.panelMain.TabIndex = 3;
             // 
+            // labelName
+            // 
+            this.labelName.AutoSize = true;
+            this.labelName.Location = new System.Drawing.Point(613, 22);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(16, 13);
+            this.labelName.TabIndex = 6;
+            this.labelName.Text = "---";
+            // 
+            // labelNameFla
+            // 
+            this.labelNameFla.AutoSize = true;
+            this.labelNameFla.Location = new System.Drawing.Point(536, 22);
+            this.labelNameFla.Name = "labelNameFla";
+            this.labelNameFla.Size = new System.Drawing.Size(71, 13);
+            this.labelNameFla.TabIndex = 5;
+            this.labelNameFla.Text = "Logged in as:";
+            // 
+            // buttonLogout
+            // 
+            this.buttonLogout.Location = new System.Drawing.Point(706, 17);
+            this.buttonLogout.Name = "buttonLogout";
+            this.buttonLogout.Size = new System.Drawing.Size(75, 23);
+            this.buttonLogout.TabIndex = 4;
+            this.buttonLogout.Text = "Logout";
+            this.buttonLogout.UseVisualStyleBackColor = true;
+            this.buttonLogout.Click += new System.EventHandler(this.buttonLogout_Click);
+            // 
             // textSubreddit
             // 
-            this.textSubreddit.Location = new System.Drawing.Point(12, 28);
+            this.textSubreddit.Location = new System.Drawing.Point(12, 68);
             this.textSubreddit.Name = "textSubreddit";
             this.textSubreddit.Size = new System.Drawing.Size(240, 20);
             this.textSubreddit.TabIndex = 3;
@@ -100,9 +138,9 @@
             // 
             // buttonLogin
             // 
-            this.buttonLogin.Location = new System.Drawing.Point(334, 189);
+            this.buttonLogin.Location = new System.Drawing.Point(287, 200);
             this.buttonLogin.Name = "buttonLogin";
-            this.buttonLogin.Size = new System.Drawing.Size(75, 23);
+            this.buttonLogin.Size = new System.Drawing.Size(218, 80);
             this.buttonLogin.TabIndex = 2;
             this.buttonLogin.Text = "Login";
             this.buttonLogin.UseVisualStyleBackColor = true;
@@ -138,13 +176,31 @@
             this.browserAuth.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.browserAuth_DocumentCompleted);
             this.browserAuth.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browserAuth_Navigating);
             // 
-            // Form1
+            // labelSubreddit
+            // 
+            this.labelSubreddit.AutoSize = true;
+            this.labelSubreddit.Location = new System.Drawing.Point(12, 49);
+            this.labelSubreddit.Name = "labelSubreddit";
+            this.labelSubreddit.Size = new System.Drawing.Size(55, 13);
+            this.labelSubreddit.TabIndex = 7;
+            this.labelSubreddit.Text = "Subreddit:";
+            // 
+            // labelLinkbox
+            // 
+            this.labelLinkbox.AutoSize = true;
+            this.labelLinkbox.Location = new System.Drawing.Point(258, 49);
+            this.labelLinkbox.Name = "labelLinkbox";
+            this.labelLinkbox.Size = new System.Drawing.Size(35, 13);
+            this.labelLinkbox.TabIndex = 8;
+            this.labelLinkbox.Text = "Links:";
+            // 
+            // formBST
             // 
             this.ClientSize = new System.Drawing.Size(793, 530);
-            this.Controls.Add(this.panelAcc);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelAuth);
-            this.Name = "Form1";
+            this.Controls.Add(this.panelAcc);
+            this.Name = "formBST";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panelMain.ResumeLayout(false);
             this.panelMain.PerformLayout();
@@ -168,6 +224,11 @@
         private System.Windows.Forms.WebBrowser browserAuth;
         private System.Windows.Forms.TextBox textBrowser;
         private System.Windows.Forms.TextBox textSubreddit;
+        private System.Windows.Forms.Button buttonLogout;
+        private System.Windows.Forms.Label labelName;
+        private System.Windows.Forms.Label labelNameFla;
+        private System.Windows.Forms.Label labelLinkbox;
+        private System.Windows.Forms.Label labelSubreddit;
     }
 }
 

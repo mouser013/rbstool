@@ -15,18 +15,34 @@ using Newtonsoft.Json;
 
 namespace redditBatchSubmitTool
 {
-    public partial class Form1 : Form
+    public partial class formBST : Form
     {
-
+        int rateLeft, rateReset;
         String subreddit;
         Properties.Settings settings;
+
+        private bool getUsername()
+        {
+            client.DefaultRequestHeaders.Add("Authorization", "bearer " + settings.accessToken);
+            client.DefaultRequestHeaders.Add("User-Agent", "win.redditBST v.01");
+            var response = client.GetAsync("https://oauth.reddit.com/api/v1/me").Result;
+            var responseStr = response.Content.ReadAsStringAsync().Result;
+            client.DefaultRequestHeaders.Remove("Authorization");
+            client.DefaultRequestHeaders.Remove("User-Agent");
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+            idresponse resp = JsonConvert.DeserializeObject<idresponse>(responseStr);
+            Properties.Settings.Default.user = resp.name;
+            Properties.Settings.Default.Save();
+            return true;
+        }
         
         private bool retrieveToken()
         {
             if (settings.authCode == null)
                 return false;
 
-            
             var values = new Dictionary<string, string>{
                 {"grant_type","authorization_code"},
                 {"code",settings.authCode},
@@ -102,6 +118,13 @@ namespace redditBatchSubmitTool
             var content = new FormUrlEncodedContent(values);
             var response = client.PostAsync("https://oauth.reddit.com/api/submit", content).Result;
             var responseStr = response.Content.ReadAsStringAsync().Result;
+            response.Headers.TryGetValues("x-ratelimit-remaining", out val);
+            String s = string.Join("", val.Take(2));
+            rateLeft = (int)Convert.ToDouble(s);
+            response.Headers.TryGetValues("x-ratelimit-reset", out val);
+            s = string.Join("", val.Take(2));
+            rateReset = Convert.ToInt32(s);
+
             //textOut.AppendText(responseStr + '\n');
             return response.IsSuccessStatusCode;
         }
@@ -115,7 +138,7 @@ namespace redditBatchSubmitTool
 
         private static readonly HttpClient client = new HttpClient();
 
-        public Form1()
+        public formBST()
         {
             InitializeComponent();
             this.ActiveControl = panelAcc;
@@ -126,6 +149,7 @@ namespace redditBatchSubmitTool
             settings = Properties.Settings.Default;
             if(checkAndRefreshToken())
             {
+                labelName.Text = settings.user;
                 panelMain.Show();
                 panelAuth.Hide();
                 panelAcc.Hide();
@@ -140,6 +164,7 @@ namespace redditBatchSubmitTool
 
         private void buttonSubmit_Click(object sender, EventArgs e)
         {
+            buttonLogout.Enabled = false;
             String[] urls = textIn.Lines;
             String title = "no-title";
             subreddit = textSubreddit.Text;
@@ -154,8 +179,25 @@ namespace redditBatchSubmitTool
                 if(submitUrl(url, title))
                     textOut.AppendText("Submitted: "+title + " - " + url + '\n'); 
                 else
-                    textOut.AppendText("Failed: " + title + " - " + url + '\n'); 
+                    textOut.AppendText("Failed: " + title + " - " + url + '\n');
+                if (rateLeft < 10)
+                {
+                    int t = rateReset, t2;
+                    while(t >= 0)
+                    {
+                        if (t < 5)
+                            t2 = t;
+                        else
+                            t2 = 5;
+                        textOut.AppendText(String.Format("Ratelimit reached. Please wait {0} seconds.\n", t));
+                        textOut.Update();
+                        System.Threading.Thread.Sleep(t2 * 1000);
+                        t -= 5;
+                    }
+                    
+                }
             }
+            buttonLogout.Enabled = true;
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
@@ -163,6 +205,21 @@ namespace redditBatchSubmitTool
             panelAuth.Show();
             panelAcc.Hide();
             browserAuth.Navigate("https://www.reddit.com/api/v1/authorize?client_id=8DzA0_bx9X8hCA&response_type=code&state=akrnarvhburvbuyrirvb&redirect_uri=https://mouser013.github.io&duration=permanent&scope=identity submit");
+        }
+
+        private void buttonLogout_Click(object sender, EventArgs e)
+        {
+            var confirm = MessageBox.Show(null, "Are you sure you want to log out?", "Confirm", MessageBoxButtons.YesNo);
+            if(confirm == DialogResult.Yes)
+            {
+                settings.accessToken = "";
+                settings.refreshToken = "";
+                settings.authCode = "";
+                settings.user = "---";
+                settings.Save();
+                panelMain.Hide();
+                panelAcc.Show();
+            }
         }
 
         private void browserAuth_Navigating(object sender, WebBrowserNavigatingEventArgs e)
@@ -177,6 +234,8 @@ namespace redditBatchSubmitTool
                 String res = doc.Url.Query;
                 parseCode(res);
                 retrieveToken();
+                getUsername();
+                labelName.Text = settings.user;
                 panelAuth.Hide();
                 panelMain.Show();
                 //textBrowser.AppendText(res + "\n");
@@ -184,6 +243,7 @@ namespace redditBatchSubmitTool
                 //textOut.AppendText(settings.authCode);
             }
         }
+
     }
 
     public class tokenresponse
@@ -194,4 +254,9 @@ namespace redditBatchSubmitTool
         public String scope;
         public String refresh_token;
     };
+
+    public class idresponse
+    {
+        public String name;
+    }
 }
