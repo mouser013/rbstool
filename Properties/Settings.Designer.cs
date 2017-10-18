@@ -81,5 +81,17 @@ namespace redditBatchSubmitTool.Properties {
                 this["user"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool loggingEnabled {
+            get {
+                return ((bool)(this["loggingEnabled"]));
+            }
+            set {
+                this["loggingEnabled"] = value;
+            }
+        }
     }
 }

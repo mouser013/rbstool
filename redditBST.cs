@@ -21,6 +21,28 @@ namespace redditBatchSubmitTool
         String subreddit;
         Properties.Settings settings;
 
+        private void writeLineToLog(String text)
+        {
+            textOut.AppendText(text + '\n');
+            if(settings.loggingEnabled)
+            {
+                using (StreamWriter writer = new StreamWriter("log.txt", append: true))
+                {
+                    writer.WriteLine(text + '\n');
+                }
+            }
+        }
+
+        private String getTitle(String url)
+        {
+            var response = client.GetAsync(url).Result;
+            var responseStr = response.Content.ReadAsStringAsync().Result;
+            String title = System.Text.RegularExpressions.Regex.Match(responseStr, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups["Title"].Value;
+            if (title == "")
+                title = "no-title";
+            return title;
+        }
+
         private bool getUsername()
         {
             client.DefaultRequestHeaders.Add("Authorization", "bearer " + settings.accessToken);
@@ -125,7 +147,7 @@ namespace redditBatchSubmitTool
             s = string.Join("", val.Take(2));
             rateReset = Convert.ToInt32(s);
 
-            //textOut.AppendText(responseStr + '\n');
+            //writeLineToLog(responseStr);
             return response.IsSuccessStatusCode;
         }
 
@@ -147,6 +169,12 @@ namespace redditBatchSubmitTool
         private void Form1_Load(object sender, EventArgs e)
         {
             settings = Properties.Settings.Default;
+
+            if (settings.loggingEnabled)
+                loggingToolStripMenuItem.Checked = true;
+            else
+                loggingToolStripMenuItem.Checked = false;
+
             if(checkAndRefreshToken())
             {
                 labelName.Text = settings.user;
@@ -165,21 +193,33 @@ namespace redditBatchSubmitTool
         private void buttonSubmit_Click(object sender, EventArgs e)
         {
             buttonLogout.Enabled = false;
+            buttonSubmit.Enabled = false;
+
             String[] urls = textIn.Lines;
             String title = "no-title";
             subreddit = textSubreddit.Text;
+            int nSub = 0, nFail = 0;
 
             for (int i = 0; i < urls.Length; i++)
             {
                 String url = urls[i];
+
                 if(url.Contains("gfycat.com"))
-                {
                     title = url.Substring(url.LastIndexOf('/') + 1);
-                }
-                if(submitUrl(url, title))
-                    textOut.AppendText("Submitted: "+title + " - " + url + '\n'); 
                 else
-                    textOut.AppendText("Failed: " + title + " - " + url + '\n');
+                    title = getTitle(url);
+
+                if (submitUrl(url, title))
+                {
+                    writeLineToLog("Submitted: " + title + " - " + url);
+                    nSub++;
+                }
+                else
+                {
+                    writeLineToLog("Failed: " + title + " - " + url);
+                    nFail++;
+                }
+
                 if (rateLeft < 10)
                 {
                     int t = rateReset, t2;
@@ -189,7 +229,7 @@ namespace redditBatchSubmitTool
                             t2 = t;
                         else
                             t2 = 5;
-                        textOut.AppendText(String.Format("Ratelimit reached. Please wait {0} seconds.\n", t));
+                        writeLineToLog(String.Format("Ratelimit reached. Please wait {0} seconds.", t));
                         textOut.Update();
                         System.Threading.Thread.Sleep(t2 * 1000);
                         t -= 5;
@@ -197,6 +237,10 @@ namespace redditBatchSubmitTool
                     
                 }
             }
+
+            writeLineToLog(String.Format("Processed {0} urls - {1} submitted, {2} failed.\n", nSub + nFail, nSub, nFail));
+
+            buttonSubmit.Enabled = true;
             buttonLogout.Enabled = true;
         }
 
@@ -239,9 +283,24 @@ namespace redditBatchSubmitTool
                 panelAuth.Hide();
                 panelMain.Show();
                 //textBrowser.AppendText(res + "\n");
-                //textOut.AppendText(res);
-                //textOut.AppendText(settings.authCode);
+                //writeLineToLog(res);
+                //writeLineToLog(settings.authCode);
             }
+        }
+
+        private void loggingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (loggingToolStripMenuItem.Checked)
+            {
+                settings.loggingEnabled = true;
+                writeLineToLog("Logging enabled.");
+            }
+            else
+            {
+                settings.loggingEnabled = false;
+                writeLineToLog("Logging disabled.");
+            }
+            settings.Save();
         }
 
     }
