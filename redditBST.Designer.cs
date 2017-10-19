@@ -47,10 +47,13 @@
             this.panelAuth = new System.Windows.Forms.Panel();
             this.textBrowser = new System.Windows.Forms.TextBox();
             this.browserAuth = new System.Windows.Forms.WebBrowser();
+            this.panelLoad = new System.Windows.Forms.Panel();
+            this.progressBarLoad = new System.Windows.Forms.ProgressBar();
             this.contextMenuLog.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.panelAcc.SuspendLayout();
             this.panelAuth.SuspendLayout();
+            this.panelLoad.SuspendLayout();
             this.SuspendLayout();
             // 
             // textIn
@@ -87,13 +90,13 @@
             this.contextMenuLog.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loggingToolStripMenuItem});
             this.contextMenuLog.Name = "contextMenuLog";
-            this.contextMenuLog.Size = new System.Drawing.Size(153, 48);
+            this.contextMenuLog.Size = new System.Drawing.Size(112, 26);
             // 
             // loggingToolStripMenuItem
             // 
             this.loggingToolStripMenuItem.CheckOnClick = true;
             this.loggingToolStripMenuItem.Name = "loggingToolStripMenuItem";
-            this.loggingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loggingToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.loggingToolStripMenuItem.Text = "Logging";
             this.loggingToolStripMenuItem.ToolTipText = "Enable logging to file.";
             this.loggingToolStripMenuItem.Click += new System.EventHandler(this.loggingToolStripMenuItem_Click);
@@ -215,6 +218,7 @@
             this.textBrowser.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBrowser.Size = new System.Drawing.Size(787, 20);
             this.textBrowser.TabIndex = 0;
+            this.textBrowser.TextChanged += new System.EventHandler(this.textBrowser_TextChanged);
             // 
             // browserAuth
             // 
@@ -227,14 +231,32 @@
             this.browserAuth.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.browserAuth_DocumentCompleted);
             this.browserAuth.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browserAuth_Navigating);
             // 
+            // panelLoad
+            // 
+            this.panelLoad.Controls.Add(this.progressBarLoad);
+            this.panelLoad.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLoad.Location = new System.Drawing.Point(0, 0);
+            this.panelLoad.Name = "panelLoad";
+            this.panelLoad.Size = new System.Drawing.Size(793, 530);
+            this.panelLoad.TabIndex = 3;
+            // 
+            // progressBarLoad
+            // 
+            this.progressBarLoad.Location = new System.Drawing.Point(258, 257);
+            this.progressBarLoad.Name = "progressBarLoad";
+            this.progressBarLoad.Size = new System.Drawing.Size(221, 23);
+            this.progressBarLoad.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarLoad.TabIndex = 0;
+            // 
             // formBST
             // 
             this.ClientSize = new System.Drawing.Size(793, 530);
+            this.Controls.Add(this.panelLoad);
             this.Controls.Add(this.panelAcc);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelAuth);
             this.Name = "formBST";
-            this.Text = "Reddit Batch Sbmit Tool";
+            this.Text = "Reddit Batch Submit Tool";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.contextMenuLog.ResumeLayout(false);
             this.panelMain.ResumeLayout(false);
@@ -243,6 +265,7 @@
             this.panelAcc.PerformLayout();
             this.panelAuth.ResumeLayout(false);
             this.panelAuth.PerformLayout();
+            this.panelLoad.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -268,6 +291,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuLog;
         private System.Windows.Forms.ToolStripMenuItem loggingToolStripMenuItem;
         private System.Windows.Forms.Label labelAuthor;
+        private System.Windows.Forms.Panel panelLoad;
+        private System.Windows.Forms.ProgressBar progressBarLoad;
     }
 }
 

@@ -175,17 +175,19 @@ namespace redditBatchSubmitTool
             else
                 loggingToolStripMenuItem.Checked = false;
 
+            panelLoad.Hide();
+            panelAuth.Hide();
+
             if(checkAndRefreshToken())
             {
                 labelName.Text = settings.user;
                 panelMain.Show();
-                panelAuth.Hide();
                 panelAcc.Hide();
+                
             }
             else
             {
                 panelMain.Hide();
-                panelAuth.Hide();
                 panelAcc.Show();
             }
         }
@@ -275,16 +277,19 @@ namespace redditBatchSubmitTool
             HtmlDocument doc = browserAuth.Document;
             if(e.Url.Host == "mouser013.github.io")
             {
+                panelLoad.Show();
+                panelAuth.Hide();
+                progressBarLoad.Value = 10;
                 String res = doc.Url.Query;
                 parseCode(res);
+                progressBarLoad.Value = 20;
                 retrieveToken();
+                progressBarLoad.Value = 90;
                 getUsername();
+                progressBarLoad.Value = 100;
                 labelName.Text = settings.user;
-                panelAuth.Hide();
                 panelMain.Show();
-                //textBrowser.AppendText(res + "\n");
-                //writeLineToLog(res);
-                //writeLineToLog(settings.authCode);
+                panelLoad.Hide();
             }
         }
 
@@ -301,6 +306,11 @@ namespace redditBatchSubmitTool
                 writeLineToLog("Logging disabled.");
             }
             settings.Save();
+        }
+
+        private void textBrowser_TextChanged(object sender, EventArgs e)
+        {
+
         }
 
     }
