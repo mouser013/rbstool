@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formBST));
             this.textIn = new System.Windows.Forms.TextBox();
             this.buttonSubmit = new System.Windows.Forms.Button();
             this.textOut = new System.Windows.Forms.TextBox();
@@ -255,6 +256,7 @@
             this.Controls.Add(this.panelAcc);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelAuth);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "formBST";
             this.Text = "Reddit Batch Submit Tool";
             this.Load += new System.EventHandler(this.Form1_Load);
